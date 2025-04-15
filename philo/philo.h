@@ -28,5 +28,6 @@ int check_args(int argc,char **arg);
 t_philo *define_t_philo(int arr[]);
 int creat_threads(int arr[]);
 void *rotin(void* thread);
+void ft_free(void *arr, void *var1, void *var2);
 
 #endif

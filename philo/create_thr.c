@@ -1,18 +1,22 @@
 #include "philo.h"
 
-void ft_free(void **arr, void *var1, void *var2);
+void ft_free(void *arr, void *var1, void *var2);
+t_bool * define_table(int arr[]);
 
 int creat_threads(int arr[])
 {
 	t_philo *threads;
 	int i;
 
-	i = 0;
-	threads = define_t_philo(arr);
+	i = -1;
+	threads =define_t_philo(arr);
 	if(!threads)
+	{
+		printf("Error in defining threads");
 		return(1);
-	while(i<arr[0])
-		pthread_create(&threads[i].thread,NULL,&rotin,&threads[i++]);
+	}
+	while(++i<arr[0])
+		pthread_create(&threads[i].thread,NULL,&rotin,&threads[i]);
 	i = 0;
 	while(i<arr[0])
 	{
@@ -22,10 +26,10 @@ int creat_threads(int arr[])
 	i = 0;
 	while(i<arr[0])
 	{
-		printf("dest number %i\n",i+1);
 		pthread_mutex_destroy(&threads[0].table->fork[i]);
 		i++;
 	}
+	ft_free(threads,threads->table->fork,threads->table);
 	return(0);
 }
 
@@ -35,12 +39,16 @@ t_philo *define_t_philo(int arr[])
 	t_bool *table;
 	int i;
 
-	threads = malloc(sizeof(t_philo) * arr[0]);
+	i = -1;
+	threads = malloc(sizeof(t_philo) * (arr[0]+1));
 	if(!threads)
 		return (NULL);
 	table = define_table(arr);
 	if (!table)
+	{
+		free(threads);
 		return (NULL);
+	}
 	while(++i < arr[0])
 	{
 		threads[i].id=i+1;
@@ -48,7 +56,6 @@ t_philo *define_t_philo(int arr[])
 		threads[i].table = table;
 		if((pthread_mutex_init(&table->fork[i],NULL))!=0)
 			{
-				printf("Error:fail in init mutex\n");
 				ft_free(threads,table->fork,table);
 				return (NULL);
 			}
@@ -59,12 +66,16 @@ t_bool * define_table(int arr[])
 {
 	t_bool *table;
 
-	table = malloc(sizeof(t_bool));
-	if (table == NULL);
-		return (NULL);
-	table->fork = malloc(sizeof(pthread_mutex_t ) * arr[0]);
-	if (table->fork ==NULL);
+	table = malloc(sizeof(t_bool)+1);
+	if (table == NULL)
 	{
+		printf("Error: fail in allocate table\n");
+		return (NULL);
+	}
+	table->fork = malloc(sizeof(pthread_mutex_t ) * (arr[0]+1));
+	if (table->fork ==NULL)
+	{
+		printf("Error: fail in allocate table->fork\n");
 		free (table);
 		return (NULL);
 	}
@@ -84,6 +95,6 @@ void ft_free(void *arr, void *var1, void *var2)
 		free(var1);
 	if(var2)
 		free(var2);
-	while (arr !=NULL)
+	if(arr)
 		free(arr);
 }
