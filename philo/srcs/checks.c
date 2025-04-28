@@ -1,5 +1,6 @@
-#include "philo.h"
+#include <philo.h>
 
+/* theis checks that the argument are all numbers*/
 int check_args(int argc,char **arg)
 {
 int i;

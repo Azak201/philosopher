@@ -1,7 +1,7 @@
-#include "philo.h"
+#include <philo.h>
 
-void ft_free(void *arr, void *var1, void *var2);
-t_bool *define_table(int arr[]);
+
+
 
 int create_threads(int arr[])
 {
@@ -9,7 +9,7 @@ int create_threads(int arr[])
 	int i;
 
 	i = -1;
-	threads = define_t_philo(arr);
+	threads = (t_philo *)define_t_philo(arr);
 	if (!threads)
 	{
 		printf("Error in defining threads");
@@ -32,8 +32,8 @@ int create_threads(int arr[])
 	ft_free(threads, threads->table->fork, threads->table);
 	return (0);
 }
-
-t_philo *define_t_philo(int arr[])
+/* this function define the element of t_philo  */
+void *define_t_philo(int arr[])
 {
 	t_philo *threads;
 	t_bool *table;
@@ -43,26 +43,22 @@ t_philo *define_t_philo(int arr[])
 	threads = malloc(sizeof(t_philo) * (arr[0]));
 	if (!threads)
 		return (NULL);
-	table = define_table(arr);
+	table = (t_bool *)define_table(arr);
 	if (!table)
-	{
-		free(threads);
-		return (NULL);
-	}
+		return (ft_free(threads, NULL, NULL));
 	while (++i < arr[0])
 	{
 		threads[i].id = i + 1;
 		threads[i].last_time_eat = 0;
 		threads[i].table = table;
 		if ((pthread_mutex_init(&table->fork[i], NULL)) != 0)
-		{
-			ft_free(threads, table->fork, table);
-			return (NULL);
-		}
+			return (ft_free(threads, table->fork, table));
 	}
 	return threads;
 }
-t_bool *define_table(int arr[])
+
+/*this function define the elements of t_bool table*/
+void *define_table(int arr[])
 {
 	t_bool *table;
 
@@ -76,8 +72,7 @@ t_bool *define_table(int arr[])
 	if (table->fork == NULL)
 	{
 		printf("Error: fail in allocate table->fork\n");
-		free(table);
-		return (NULL);
+		return (ft_free(table,NULL,NULL));
 	}
 	table->ph_n = arr[0];
 	table->time_d = arr[1];
@@ -87,7 +82,7 @@ t_bool *define_table(int arr[])
 	return (table);
 }
 
-void ft_free(void *arr, void *var1, void *var2)
+void *ft_free(void *arr, void *var1, void *var2)
 {
 	int i;
 
@@ -98,4 +93,5 @@ void ft_free(void *arr, void *var1, void *var2)
 		free(var2);
 	if (arr)
 		free(arr);
+	return (NULL);
 }

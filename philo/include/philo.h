@@ -26,9 +26,11 @@ typedef struct s_philo
 
 int ft_atoi(const char *nptr);
 int check_args(int argc, char **arg);
-t_philo *define_t_philo(int arr[]);
+void *define_t_philo(int arr[]);
 int create_threads(int arr[]);
 void *rotin(void *thread);
-void ft_free(void *arr, void *var1, void *var2);
+void *define_table(int arr[]);
+
+void *ft_free(void *arr, void *var1, void *var2);
 
 #endif
